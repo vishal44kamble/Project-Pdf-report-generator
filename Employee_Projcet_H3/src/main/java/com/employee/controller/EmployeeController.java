@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.employee.FileExporter.CsvExporter;
 import com.employee.FileExporter.FileExporter;
 import com.employee.entity.Employee;
-import com.employee.exception.PopException;
+import com.employee.exception.ResourceNotFoundException;
 import com.employee.service.IEmployeeService;
 import com.itextpdf.text.DocumentException;
 
@@ -41,66 +41,112 @@ public class EmployeeController {
 	//get
 	
 	@GetMapping("/empid/{id}")
-	public Employee getEmpById(@PathVariable Integer id) throws PopException
+	public Employee getEmpById(@PathVariable Integer id) throws ResourceNotFoundException
 	{
 	
 		 Employee emp = service.getEmpBYId(id);
-		 if(emp.getName() !=null)
+		 if(emp !=null)
 		 {
 			 return emp;
 		 }
 		 else {
-			 throw new PopException("employee with this id is not found");
+			 throw new ResourceNotFoundException("employee with this id is not found"+id);
 		 }
 	}
 	
 	
 	@GetMapping("/bysalary/{empsalary}")
-	public List<Employee> getEmpBySalary(@PathVariable(name="empsalary") Integer salary)
-	{
-		return service.getEmpBySalary(salary);
+	public ResponseEntity<List<Employee>>  getEmpBySalary(@PathVariable(name="empsalary") Integer salary)
+	{   
+		List<Employee> list = service.getEmpBySalary(salary);
+		if(list.isEmpty() !=true)
+		{
+			return ResponseEntity.ok(list);
+		}
+		else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		
 	}
 	
 	
 	@GetMapping("/byname")
-	public List<Employee> getEmpByName(@RequestParam String Name)
+	public ResponseEntity<List<Employee>> getEmpByName(@RequestParam String Name)
 	{
-		return service.getEmpByName(Name);
+		List<Employee> list = service.getEmpByName(Name);
+		if(list.isEmpty() !=true)
+		{
+			return ResponseEntity.ok(list);
+		}
+		else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 	
 	
 	@GetMapping("/bycity")
-	public List<Employee> getEmpByCity(@RequestParam (name="c") String city)
+	public ResponseEntity<List<Employee>>  getEmpByCity(@RequestParam (name="c") String city)
 	{
-		return service.getEmpByCity(city);
+		 List<Employee> list = service.getEmpByCity(city);
+		 if(list.isEmpty() !=true)
+			{
+				return ResponseEntity.ok(list);
+			}
+			else {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
 	}
 	
 	
 	@GetMapping("/15k")
-	public List<Employee> getEmpBySalary15k()
+	public  ResponseEntity<List<Employee>> getEmpBySalary15k()
 	{
-		return service.getEmpBySalary();
+	    List<Employee> list = service.getEmpBySalary();
+	    if(list.isEmpty() !=true)
+		{
+			return ResponseEntity.ok(list);
+		}
+		else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 	
 	
 	
 	@GetMapping("/allemp")
-	public List<Employee> getAllEmp(){
-		return service.getAllEmployee();
+	public  ResponseEntity<List<Employee>> getAllEmp(){
+		 List<Employee> list = service.getAllEmployee();
+		 if(list.isEmpty() !=true)
+			{
+				return ResponseEntity.ok(list);
+			}
+			else {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
 	}
 	
 	//set
 	@PostMapping("/save")
-	public String saveEmp(@RequestBody Employee emp)
+	public  ResponseEntity<String> saveEmp(@RequestBody Employee emp)
 	{
-		if(emp.getName() !=null)
+	
+			
+			if(emp !=null)
+			{
+				
+				service.save(emp);
+				return ResponseEntity.ok("saved succefully");
+			}
+			
+		else
 		{
 			
-			service.save(emp);
-			return "data saved";
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			
 		}
-		else
-			return "object is null please check it ";
+		
+		
+	
 		
 	}
 	
@@ -110,33 +156,49 @@ public class EmployeeController {
 		try {
 			service.update(id, emp);
 			return ResponseEntity.ok("data is added");
-		} catch (PopException e) {
+		} catch (ResourceNotFoundException e) {
 			// TODO Auto-generated catch block
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
 	}
 	
 	@DeleteMapping("/delete/{id}")
-	 public void deleteById(@PathVariable Integer id)
+	 public ResponseEntity<String> deleteById(@PathVariable Integer id)
 	 {
-		service.deleteById(id);
+		Employee employee = service.getEmpBYId(id);
+		if(employee !=null)
+		{
+			service.deleteById(id);
+			return ResponseEntity.ok("deleted succcefully");
+			
+		}
+		else
+		{
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			
+		}
 	 }
 	
 	@GetMapping("/getPdf")
-	public void exportTopdf(HttpServletResponse response) throws DocumentException, IOException
+	public  ResponseEntity<String> exportTopdf(HttpServletResponse response) throws DocumentException, IOException
 	{
 		List<Employee> list = service.getAllEmployee();
-		exporter.exportToPdf(list, response);
+		if(list.isEmpty() !=true)
+		{
+			
+			exporter.exportToPdf(list, response);
+			return ResponseEntity.ok("see the pdf");
+			
+		}
+		else
+		{
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			
+		}
 		
 	}
 	
-	@GetMapping("/getCsv")
-	public void exportToCsv(HttpServletResponse response) throws DocumentException, IOException
-	{
-		List<Employee> list = service.getAllEmployee();
-		cexCsvExporter.exportToCsv(list, response);
-		
-	}
+	
 	
 	
 

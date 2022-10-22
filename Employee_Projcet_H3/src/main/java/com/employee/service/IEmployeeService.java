@@ -3,7 +3,7 @@ package com.employee.service;
 import java.util.List;
 
 import com.employee.entity.Employee;
-import com.employee.exception.PopException;
+import com.employee.exception.ResourceNotFoundException;
 
 public interface IEmployeeService {//9854529529
 	
@@ -25,7 +25,7 @@ public interface IEmployeeService {//9854529529
 	
 	//update
 	
-	public void update(Integer id,Employee emp) throws PopException;
+	public void update(Integer id,Employee emp) throws ResourceNotFoundException;
 	
 	
 	//delete

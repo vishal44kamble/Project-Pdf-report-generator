@@ -16,7 +16,7 @@ public interface IEmployee extends JpaRepository<Employee, Integer>{
 	public List<Employee> findByName(String name);
 	public List<Employee> findByCity(String city);
 	public List<Employee> findBySalary(Integer salary);
-	@Query(value = "select * from Employee_Project where salary>=15000" , nativeQuery = true)
+	@Query(value = "select * from Employee_Project where salary=15000" , nativeQuery = true)
 	public List<Employee> findSalary15k();
 
 	@Query(value = "select * from Employee_Project where salary >= :salary",nativeQuery = true)

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.employee.entity.Employee;
-import com.employee.exception.PopException;
+import com.employee.exception.ResourceNotFoundException;
 import com.employee.repository.IEmployee;
 @Service
 public class EmployeeServiceImpl implements IEmployeeService {
@@ -87,9 +87,9 @@ public class EmployeeServiceImpl implements IEmployeeService {
 
 
 	@Override
-	public void update(Integer id,Employee emp) throws PopException  {
+	public void update(Integer id,Employee emp) throws ResourceNotFoundException  {
 		
-			Employee updateEmployee = employee.findById(id).orElseThrow(() -> new PopException("object is null"));
+			Employee updateEmployee = employee.findById(id).orElseThrow(() -> new ResourceNotFoundException("object is null"));
 			updateEmployee.setName(emp.getName());
 			updateEmployee.setCity(emp.getCity());
 			updateEmployee.setSalary(emp.getSalary());
