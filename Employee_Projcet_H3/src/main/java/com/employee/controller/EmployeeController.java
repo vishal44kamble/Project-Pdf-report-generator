@@ -35,11 +35,7 @@ public class EmployeeController {
 	private FileExporter exporter;
 	
 	@Autowired
-	private CsvExporter cexCsvExporter;
-	
-	
-	//get
-	
+	private CsvExporter cexCsvExporter;	
 	@GetMapping("/empid/{id}")
 	public Employee getEmpById(@PathVariable Integer id) throws ResourceNotFoundException
 	{
@@ -53,7 +49,6 @@ public class EmployeeController {
 			 throw new ResourceNotFoundException("employee with this id is not found"+id);
 		 }
 	}
-	
 	
 	@GetMapping("/bysalary/{empsalary}")
 	public ResponseEntity<List<Employee>>  getEmpBySalary(@PathVariable(name="empsalary") Integer salary)
@@ -145,9 +140,6 @@ public class EmployeeController {
 			
 		}
 		
-		
-	
-		
 	}
 	
 	@PutMapping("/update/{id}")
@@ -197,9 +189,5 @@ public class EmployeeController {
 		}
 		
 	}
-	
-	
-	
-	
 
 }

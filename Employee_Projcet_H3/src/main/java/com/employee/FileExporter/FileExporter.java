@@ -1,17 +1,9 @@
 package com.employee.FileExporter;
-
-
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.stereotype.Component;
-
-
 import com.employee.entity.Employee;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -26,22 +18,15 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 @Component
 public class FileExporter {
-	
 	public void setResponceHeader(HttpServletResponse response, String contentType,String extension,String prefix)
 	{
-		DateFormat  dateFormat=new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-		String timeStamp= dateFormat.format(new Date());
+		LocalDateTime timeStamp = LocalDateTime.now(); 
 		String fileName=prefix+timeStamp+extension;
-		
 		response.setContentType(contentType);
-		
 		String headerKey="contemt-Desposition";
 		String headerValue="attachement:filename:-"+fileName;
 		response.setHeader(headerKey, headerValue);
-		
 	}
-	
-	
 	public void exportToPdf(List<Employee> empList,HttpServletResponse response) throws DocumentException, IOException
 	{
 		setResponceHeader(response, "application/pdf", ".pdf", "Employee_");
@@ -53,18 +38,14 @@ public class FileExporter {
 		
 		Font font=FontFactory.getFont(FontFactory.HELVETICA_BOLD);
 		font.setSize(18);
-		//font.setColor(Color.BLACK);
 		
 		Paragraph para=new Paragraph("Employee List",font);
 		para.setAlignment(Paragraph.ALIGN_CENTER);
 		document.add(para);
 		
-		
 		PdfPTable table=new PdfPTable(4);
 		table.setWidthPercentage(100);
 		table.setSpacingBefore(10);
-		
-		
 		
 		writeEmployeeHeader(table);
 		writeEmployeeData(table, empList);
@@ -73,11 +54,9 @@ public class FileExporter {
 		document.close();
 		
 	}
-	
 	private void writeEmployeeHeader(PdfPTable table)
 	{
 		PdfPCell cell=new PdfPCell();
-		//cell.setBackgroundColor(Color.orange);
 		cell.setPadding(5);
 		
 		Font font=FontFactory.getFont(FontFactory.HELVETICA_BOLD);
@@ -109,8 +88,4 @@ public class FileExporter {
 		}
 		
 	}
-	
-	
-	
-
 }
